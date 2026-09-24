@@ -1,0 +1,30 @@
+# Personal Render host for backup/mofazzal-personal.
+# Create the site from this branch in the Render dashboard:
+# https://dashboard.render.com/select-repo?type=blueprint
+services:
+  - type: web
+    name: canvas-quickstart-mofazzal
+    runtime: static
+    repo: https://github.com/mofazzal0413/Canvas-Quick-Start-Guide--Excalidraw
+    branch: backup/mofazzal-personal
+    buildCommand: yarn --frozen-lockfile --network-timeout 600000 && yarn build:app:docker
+    staticPublishPath: ./excalidraw-app/build
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HUSKY
+        value: "0"
+      - key: VITE_APP_DISABLE_SENTRY
+        value: "true"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache
